@@ -1,0 +1,112 @@
+@charset "utf-8";
+
+html {margin: 0px; padding: 0px;background: #fff;}
+body {margin: 0px; padding: 0px;}
+iframe {margin: 0px; padding: 0px;}
+h1 {margin: 0px; padding: 0px;}
+h2 {margin: 0px; padding: 0px;}
+h3 {margin: 0px; padding: 0px;}
+h4 {margin: 0px; padding: 0px;}
+h5 {margin: 0px; padding: 0px;}
+h6 {margin: 0px; padding: 0px;}
+p {margin: 0px; padding: 0px;}
+pre {margin: 0px; padding: 0px;}
+a {margin: 0px; padding: 0px;}
+address {margin: 0px; padding: 0px;}
+del {margin: 0px; padding: 0px;}
+em {margin: 0px; padding: 0px;}
+font {margin: 0px; padding: 0px;}
+img {margin: 0px; padding: 0px;}
+strong {margin: 0px; padding: 0px;}
+b {margin: 0px; padding: 0px;}
+u {margin: 0px; padding: 0px;}
+i {margin: 0px; padding: 0px;}
+ul {margin: 0px; padding: 0px; list-style: none;}
+ol {margin: 0px; padding: 0px; list-style: none;}
+li {margin: 0px; padding: 0px; list-style: none;}
+dl {margin: 0px; padding: 0px; list-style: none;}
+dt {margin: 0px; padding: 0px; list-style: none;}
+dd {margin: 0px; padding: 0px; list-style: none;}
+table {margin: 0px; padding: 0px;}
+caption {margin: 0px; padding: 0px;}
+tbody {margin: 0px; padding: 0px;}
+tfoot {margin: 0px; padding: 0px;}
+thead {margin: 0px; padding: 0px;}
+tr {margin: 0px; padding: 0px;}
+th {margin: 0px; padding: 0px;}
+td {margin: 0px; padding: 0px;}
+fieldset {margin: 0px; padding: 0px;}
+form {margin: 0px; padding: 0px;}
+label {margin: 0px; padding: 0px;}
+legend {margin: 0px; padding: 0px;}
+input {margin: 0px; padding: 0px;}
+input:focus {outline: none;}
+button {margin: 0px; padding: 0px;}
+textarea {margin: 0px; padding: 0px;}
+select {margin: 0px; padding: 0px;}
+header {margin: 0px; padding: 0px; display: block;}
+footer {margin: 0px; padding: 0px; display: block;}
+section {margin: 0px; padding: 0px; display: block;}
+article {margin: 0px; padding: 0px; display: block;}
+aside {margin: 0px; padding: 0px; display: block;}
+nav {margin: 0px; padding: 0px; display: block;}
+hgroup {margin: 0px; padding: 0px; display: block;}
+details {margin: 0px; padding: 0px; display: block;}
+menu {margin: 0px; padding: 0px; display: block;}
+figure {margin: 0px; padding: 0px; display: block;}
+figcaption {margin: 0px; padding: 0px; display: block;}
+fieldset {border: 0px currentColor; border-image: none;}
+img {border: 0px currentColor; border-image: none;}
+table {border: 0px currentColor; border-image: none;}
+caption {border: 0px currentColor; border-image: none;}
+tbody {border: 0px currentColor; border-image: none;}
+tfoot {border: 0px currentColor; border-image: none;}
+thead {border: 0px currentColor; border-image: none;}
+tr {border: 0px currentColor; border-image: none;}
+th {border: 0px currentColor; border-image: none;}
+td {border: 0px currentColor; border-image: none;}
+button {border: 0px currentColor; border-image: none;}
+hr {border: 0px currentColor; border-image: none;}
+address {font-style: normal;}
+caption {font-style: normal;}
+cite {font-style: normal;}
+code {font-style: normal;}
+dfn {font-style: normal;}
+em {font-style: normal;}
+strong {font-style: normal;}
+th {font-style: normal;}
+var {font-style: normal;}
+caption {line-height: 0; overflow: hidden; font-size: 0px;}
+legend {line-height: 0; overflow: hidden; font-size: 0px;}
+img {vertical-align: middle;}
+a {text-decoration: none;}
+a:hover {outline: 0px;}
+a:active {outline: 0px;}
+section,article,aside,header,footer,nav,video,fieldset,figure,figcaption{display:block}
+img,fieldset,button{border:none}
+h1,h2,h3,h4,h5,h6,em,strong,address{font-size: 14px;font-weight:normal;font-style: normal}
+a:link, a:visited {text-decoration:none;color:#444}
+a:hover,a:active {text-decoration:none;color:#444}
+body, input, select, button, textarea{font-size:14px;color:#444;font-family:'Noto Sans KR',sans-serif;-webkit-text-size-adjust:none}
+legend, caption {width:1px;height:1px;overflow:hidden;line-height:0;font-size:0;position:absolute;left:-99999}
+html {margin: 0px; padding: 0px;background: #fff}
+body, iframe, h1, h2, h3, h4, h5, h6, p, pre, a, address, del, em, font, img, strong, b, u, i, ul, ol, li, dl, dt, dd, table, caption, tbody, thead, tfoot, th, tr, td, fieldset, form, label, legend, input, textarea, button, select, header, section, footer, article, aside, nav, hgroup, details, menu, figure, figcaption, span, div{margin: 0px; padding: 0px;-webkit-box-sizing: border-box;-moz-box-sizing: border-box;box-sizing: border-box}
+input:focus, textarea:focus, button:focus{outline: none}
+img, table, caption, tbody, thead, tfoot, tr, th, td, button, hr{border-image: none}
+
+/* 메인페이지 CSS 적용 */
+.result_table {border-top: 2px solid #d9d9d9;}
+.result_table {width: 100%;border-top: 1px solid #d9d9d9}
+.result_table th{letter-spacing: -0.5px;font-weight: normal;height: 40px;background: #f4f4f4}
+.result_table tr{border-bottom: 1px solid #d9d9d9}
+.result_table tbody tr{background: #fafafa;color: #898989;letter-spacing: -0.5px;text-align: center}
+.result_table tbody td{padding: 12.5px 0}
+
+.loading_dim {position: fixed; top: 0px; left: 0px; width: 100%; height: 100%; z-index: 100; opacity: 0.5; background-color: rgb(0, 0, 0); display: none}
+.url_textarea {height: 150px;width: 1200px;margin-bottom: 10px; resize: none;}
+.btn_contactus {width: 165px;height: 60px;border-radius: 3px;background: #ffba00;font-size: 18px;color: #fff;font-weight: 500;margin-bottom: 10px;}
+
+.mr10 {margin-right: 10px;}
+.mt35 {margin-top: 35px;}
+.pd10 {padding: 10px;}
+.fts17 {font-size: 17px;}

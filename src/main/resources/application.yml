@@ -1,0 +1,12 @@
+crawler:
+  driver:
+    id: webdriver.chrome.driver
+    path: lib\chromedriver.exe
+  ignore-protected-mode-settings: true
+  use-allowed-ips: true
+  use-secret-mode: true
+  use-headless-mode: true
+  files:
+    log: log\crawler.log
+  logging:
+    mode: NEW
