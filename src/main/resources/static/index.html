@@ -5,166 +5,291 @@
     <title>4URL 업체 Crawling Web</title>
 </head>
 <link href="/css/index.css" rel="stylesheet" type="text/css" media="all" />
-<body class="pd10">
-<div id="loading" class="loading_dim"></div>
+<body>
 <link rel="icon" href="favicon.ico" type="image/x-icon" />
 <script src="//code.jquery.com/jquery-3.3.1.min.js"></script>
-<div>
-    <textarea id="urls" placeholder="네이버 지도 URL 입력, 줄바꿈으로 구분" class="url_textarea"></textarea>
-    <br/>
-    <button id="crawling" class="btn_contactus mr10">데이터 가져오기</button>
-    <input type="checkbox" id="use_secret_mode" checked><label for="use_secret_mode" class="fts17 mr10">시크릿 모드 사용</label>
-    <input type="checkbox" id="use_headless_mode"><label for="use_headless_mode" class="fts17">크롬창 띄우지 않기</label>
-    <br/>
-    <textarea id="invalid_urls" class="url_textarea" disabled></textarea>
+<div id="loading" class="loading_dim"></div>
+<div id="modalDiv" class="modalDiv">
+    <div class="modalContent">
+        <div class="choice_title">업체 선택</div>
+        <table id="choice_table" class="choice_table">
+            <colgroup>
+                <col width="5%"/>
+                <col width="5%"/>
+                <col width="6%"/>
+                <col width="12%"/>
+                <col width="5%"/>
+                <col width="12%"/>
+                <col width="14%"/>
+                <col width="5%"/>
+                <col width="10%"/>
+                <col width="13%"/>
+                <col width="5%"/>
+                <col width="5%"/>
+                <col width="3%"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>업체명</th>
+                    <th>카테고리</th>
+                    <th>전화번호</th>
+                    <th>영업 시간</th>
+                    <th>홈페이지</th>
+                    <th>설명</th>
+                    <th>편의시설</th>
+                    <th>짧은주소</th>
+                    <th>주소</th>
+                    <th>도로명 주소</th>
+                    <th>위도</th>
+                    <th>경도</th>
+                    <th>선택</th>
+                </tr>
+            </thead>
+            <tbody id="choice"></tbody>
+        </table>
+        <input type="button" value="넘어가기" class="next_btn" onclick="goToNextChoice()">
+    </div>
 </div>
-<div class="mt35">
-    <table id="result_table" class="result_table">
-        <thead>
-            <tr>
-                <th>업체명</th>
-                <th>카테고리</th>
-                <th>전화번호</th>
-                <th>영업 시간</th>
-                <th>홈페이지</th>
-                <th>설명</th>
-                <th>편의시설</th>
-                <th>짧은주소</th>
-                <th>주소</th>
-                <th>도로명 주소</th>
-                <th>위도</th>
-                <th>경도</th>
-                <th>지도 URL</th>
-            </tr>
-        </thead>
-        <tbody id="result"></tbody>
-    </table>
-    <br/>
-    <button type="button" class="btn_contactus" onclick="fnExcelReport('result_table','상점 데이터');">엑셀 다운로드</button>
+<div class="main_div">
+    <div>
+        <textarea id="urls" placeholder="네이버 지도 URL 입력, 줄바꿈으로 구분" class="url_textarea"></textarea>
+        <br/>
+        <button id="crawling" class="btn_contactus mr10">데이터 가져오기</button>
+        <input type="checkbox" id="use_secret_mode" checked><label for="use_secret_mode" class="fts17 mr10">시크릿 모드 사용</label>
+        <input type="checkbox" id="use_headless_mode"><label for="use_headless_mode" class="fts17">크롬창 띄우지 않기</label>
+        <br/>
+        <textarea id="invalid_urls" class="url_textarea" disabled></textarea>
+    </div>
+    <div class="mt35">
+        <table id="result_table" class="result_table">
+            <colgroup>
+                <col width="5%"/>
+                <col width="5%"/>
+                <col width="6%"/>
+                <col width="12%"/>
+                <col width="5%"/>
+                <col width="12%"/>
+                <col width="14%"/>
+                <col width="5%"/>
+                <col width="10%"/>
+                <col width="13%"/>
+                <col width="5%"/>
+                <col width="5%"/>
+                <col width="3%"/>
+            </colgroup>
+            <thead>
+                <tr>
+                    <th>업체명</th>
+                    <th>카테고리</th>
+                    <th>전화번호</th>
+                    <th>영업 시간</th>
+                    <th>홈페이지</th>
+                    <th>설명</th>
+                    <th>편의시설</th>
+                    <th>짧은주소</th>
+                    <th>주소</th>
+                    <th>도로명 주소</th>
+                    <th>위도</th>
+                    <th>경도</th>
+                    <th>지도 URL</th>
+                </tr>
+            </thead>
+            <tbody id="result"></tbody>
+        </table>
+        <br/>
+        <button type="button" class="btn_contactus" onclick="fnExcelReport('result_table','상점 데이터');">엑셀 다운로드</button>
+    </div>
 </div>
-
 <script>
-    $('#crawling').click(function() {
-        var urlArray = $("#urls").val().split("\n");
-        var invalidUrls = '';
-        if($("#urls").val() == '' || urlArray == null || urlArray == undefined || urlArray.length == 0) {
-            alert('검색할 URL이 비어있음');
+var choiceStores = [];
+var choiceIndex = 0;
+
+$('#crawling').click(function() {
+    // 선택 업체 데이터 초기화
+    choiceStores = [];
+    choiceIndex = 0;
+
+    // Crawling Data 셋팅
+    var urlArray = $("#urls").val().split("\n");
+    var invalidUrls = '';
+    if($("#urls").val() == '' || urlArray == null || urlArray == undefined || urlArray.length == 0) {
+        alert('검색할 URL이 비어있음');
+        $("#invalid_urls").html(invalidUrls);
+        return;
+    }
+    var urls = [];
+    for(var i = 0; i < urlArray.length; i ++) {
+        if(urlArray[i] == '') {
+            continue;
+        }
+        if(checkUrlForm(urlArray[i])) {
+            urls.push(urlArray[i]);
+        } else {
+            invalidUrls += urlArray[i] + '\n';
             $("#invalid_urls").html(invalidUrls);
-            return;
         }
-        var urls = [];
-        for(var i = 0; i < urlArray.length; i ++) {
-            if(urlArray[i] == '') {
-                continue;
-            }
-            if(checkUrlForm(urlArray[i])) {
-                urls.push(urlArray[i]);
-            } else {
-                invalidUrls += urlArray[i] + '\n';
-                $("#invalid_urls").html(invalidUrls);
-            }
-        }
+    }
 
-        if(urls == null || urls == undefined || urls.length == 0) {
-            alert('검색할 URL이 비어있음');
-            return;
-        }
+    if(urls == null || urls == undefined || urls.length == 0) {
+        alert('검색할 URL이 비어있음');
+        return;
+    }
 
-        $("#loading").show();
-        var param = {
-            'urls':urls,
-            'useHeadlessMode': $('#use_headless_mode').is(':checked'),
-            'useSecretMode': $('#use_secret_mode').is(':checked')
-        }
-        $.ajax({
-            url : '/crawling',
-            dataType: 'json',
-            type: 'POST',
-            headers	: { 'Content-Type': 'application/json;charset=utf-8' },
-            data: JSON.stringify(param),
-            success: function(result) {
-                if(result != null && result != undefined && result.length != 0) {
-                    var resultHtml = "";
-                    for(var i = 0; i < result.successes.length; i ++) {
-                        var data = result.successes[i];
-                        resultHtml += "<tr>";
-                        resultHtml += "<td>" + (data.placeName == null ? '' : data.placeName) + "</td>";
-                        resultHtml += "<td>" + (data.category == null ? '' : data.category) + "</td>";
-                        resultHtml += "<td>" + (data.tel == null ? '' : data.tel) + "</td>";
-                        resultHtml += "<td>" + (data.businessHour == null ? '' : data.businessHour) + "</td>";
-                        resultHtml += "<td>" + (data.homepage == null ? '' : data.homepage) + "</td>";
-                        resultHtml += "<td>" + (data.description == null ? '' : data.description) + "</td>";
-                        resultHtml += "<td>" + (data.convenience == null ? '' : data.convenience) + "</td>";
-                        resultHtml += "<td>" + (data.shortAddress == null ? '' : data.shortAddress) + "</td>";
-                        resultHtml += "<td>" + (data.address == null ? '' : data.address) + "</td>";
-                        resultHtml += "<td>" + (data.roadAddress == null ? '' : data.roadAddress) + "</td>";
-                        resultHtml += "<td>" + (data.latitude == null ? '' : data.latitude) + "</td>";
-                        resultHtml += "<td>" + (data.longitude == null ? '' : data.longitude) + "</td>";
-                        resultHtml += "<td>" + (data.mapUrl == null ? '' : data.mapUrl) + "</td>";
-                        resultHtml += "</tr>";
+    // Dim 노출
+    $("#loading").show();
+    var param = {
+        'urls':urls,
+        'useHeadlessMode': $('#use_headless_mode').is(':checked'),
+        'useSecretMode': $('#use_secret_mode').is(':checked')
+    }
+
+    // Crawling API 호출
+    $.ajax({
+        url : '/crawling',
+        dataType: 'json',
+        type: 'POST',
+        headers	: { 'Content-Type': 'application/json;charset=utf-8' },
+        data: JSON.stringify(param),
+        success: function(result) {
+            if(result != null && result != undefined &&
+                result.stores != null && result.stores != undefined && result.stores.length != 0) {
+                var resultHtml = '';
+                var stores = result.stores;
+                for(var i = 0; i < stores.length; i ++) {
+                    var choices = stores[i].choices;
+                    if(choices.length == 1) {
+                        var data = choices[0];
+                        resultHtml += '<tr>';
+                        resultHtml += makeData(data, 'result');
+                        resultHtml += '</tr>';
+                    } else {
+                        resultHtml += '<tr id="' + stores[i].uuid + '"></tr>';
+                        choiceStores.push(stores[i])
                     }
-                    for(var i = 0; i < result.fails.length; i ++) {
-                        invalidUrls += result.fails[i] + '\n';
-                    }
-
-                    $("#result").html(resultHtml);
-                } else {
-                    alert('검색 결과가 없습니다!');
                 }
 
-                $("#loading").hide();
-                $("#invalid_urls").html(invalidUrls);
-            },
-            error: function() {
-                alert('검색도중 오류가 발생했습니다!');
-                $("#loading").hide();
-            }
-        });
-    })
+                // 실패 URL 출력
+                for(var i = 0; i < result.fails.length; i ++) {
+                    invalidUrls += result.fails[i] + '\n';
+                }
 
-    function checkUrlForm(strUrl) {
-        var expUrl = /^http[s]?\:\/\//i;
-        return expUrl.test(strUrl);
+                $("#result").html(resultHtml);
+            } else {
+                alert('검색 결과가 없습니다!');
+            }
+
+            $("#invalid_urls").html(invalidUrls);
+            if(choiceStores.length > 0) {
+                showChoicePopup();
+            }
+            $("#loading").hide();
+        },
+        error: function() {
+            alert('검색도중 오류가 발생했습니다!');
+            $("#loading").hide();
+        }
+    });
+})
+
+function showChoicePopup() {
+    var choiceHtml = '';
+    var choices = choiceStores[choiceIndex].choices;
+    for(var i = 0; i < choices.length; i ++) {
+        var data = choices[i];
+        choiceHtml += '<tr>';
+        choiceHtml += makeData(data, 'choice', i)
+        choiceHtml += '</tr>';
     }
 
-    function fnExcelReport(id, title) {
-        var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
-        tab_text += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
-        tab_text += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
-        tab_text += '<x:Name>상세 데이터</x:Name>';
-        tab_text += '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
-        tab_text += '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
-        tab_text += "<table border='1px'>";
-        var exportTable = $('#' + id).clone();
-        exportTable.find('input').each(function (index, elem) {
-            $(elem).remove();
-        });
-        tab_text += exportTable.html();
-        tab_text += '</table></body></html>';
-        var ua = window.navigator.userAgent;
-        var msie = ua.indexOf("MSIE ");
-        var fileName = title + '.xls';
-        //Explorer 환경에서 다운로드
-        if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
-            if (window.navigator.msSaveBlob) {
-                var blob = new Blob([tab_text], {
-                    type: "application/csv;charset=utf-8;"
-                });
-                navigator.msSaveBlob(blob, fileName);
-            }
-        } else {
-            var blob2 = new Blob([tab_text], {
+    $("#choice").html(choiceHtml);
+    $('#modalDiv').show();
+}
+
+function goToNextChoice() {
+    $("#" + choiceStores[choiceIndex].uuid).remove();
+    showNextChoicePopup();
+}
+
+function choice(i) {
+    var resultHtml = '';
+    resultHtml += makeData(choiceStores[choiceIndex].choices[i], 'result');
+    $("#" + choiceStores[choiceIndex].uuid).html(resultHtml);
+    showNextChoicePopup();
+}
+
+function showNextChoicePopup() {
+    if((choiceIndex + 1) < choiceStores.length) {
+        showChoicePopup(++choiceIndex);
+    } else {
+        $('#modalDiv').hide();
+    }
+}
+
+function makeData(data, type, i) {
+    var resultHtml = '';
+    resultHtml += '<td><a href="' + data.mapUrl + '" target="_blank">' + (data.placeName == null ? '' : data.placeName) + '</a></td>';
+    resultHtml += '<td>' + (data.category == null ? '' : data.category) + '</td>';
+    resultHtml += '<td>' + (data.tel == null ? '' : data.tel) + '</td>';
+    resultHtml += '<td>' + (data.businessHour == null ? '' : data.businessHour) + '</td>';
+    resultHtml += '<td>' + (data.homepage == null ? '' : ('<a href="' + data.homepage + '" target="_blank">' + data.homepage + '</a>')) + '</td>';
+    resultHtml += '<td>' + (data.description == null ? '' : data.description) + '</td>';
+    resultHtml += '<td>' + (data.convenience == null ? '' : data.convenience) + '</td>';
+    resultHtml += '<td>' + (data.shortAddress == null ? '' : data.shortAddress) + '</td>';
+    resultHtml += '<td>' + (data.address == null ? '' : data.address) + '</td>';
+    resultHtml += '<td>' + (data.roadAddress == null ? '' : data.roadAddress) + '</td>';
+    resultHtml += '<td>' + (data.latitude == null ? '' : data.latitude) + '</td>';
+    resultHtml += '<td>' + (data.longitude == null ? '' : data.longitude) + '</td>';
+    if(type == 'result') {
+        resultHtml += '<td><a href="' + data.mapUrl + '" target="_blank">' + (data.mapUrl == null ? '' : data.mapUrl) + '</a></td>';
+    } else if(type == 'choice') {
+        resultHtml += '<td><input type="button" value="선택" class="select_btn" onclick="choice(' + i + ')"></td>';
+    }
+    return resultHtml;
+}
+
+function checkUrlForm(strUrl) {
+    var expUrl = /^http[s]?\:\/\//i;
+    return expUrl.test(strUrl);
+}
+
+function fnExcelReport(id, title) {
+    var tab_text = '<html xmlns:x="urn:schemas-microsoft-com:office:excel">';
+    tab_text += '<head><meta http-equiv="content-type" content="application/vnd.ms-excel; charset=UTF-8">';
+    tab_text += '<xml><x:ExcelWorkbook><x:ExcelWorksheets><x:ExcelWorksheet>'
+    tab_text += '<x:Name>상세 데이터</x:Name>';
+    tab_text += '<x:WorksheetOptions><x:Panes></x:Panes></x:WorksheetOptions></x:ExcelWorksheet>';
+    tab_text += '</x:ExcelWorksheets></x:ExcelWorkbook></xml></head><body>';
+    tab_text += "<table border='1px'>";
+    var exportTable = $('#' + id).clone();
+    exportTable.find('input').each(function (index, elem) {
+        $(elem).remove();
+    });
+    tab_text += exportTable.html();
+    tab_text += '</table></body></html>';
+    var ua = window.navigator.userAgent;
+    var msie = ua.indexOf("MSIE ");
+    var fileName = title + '.xls';
+    //Explorer 환경에서 다운로드
+    if (msie > 0 || !!navigator.userAgent.match(/Trident.*rv\:11\./)) {
+        if (window.navigator.msSaveBlob) {
+            var blob = new Blob([tab_text], {
                 type: "application/csv;charset=utf-8;"
             });
-            var filename = fileName;
-            var elem = window.document.createElement('a');
-            elem.href = window.URL.createObjectURL(blob2);
-            elem.download = filename;
-            document.body.appendChild(elem);
-            elem.click();
-            document.body.removeChild(elem);
+            navigator.msSaveBlob(blob, fileName);
         }
+    } else {
+        var blob2 = new Blob([tab_text], {
+            type: "application/csv;charset=utf-8;"
+        });
+        var filename = fileName;
+        var elem = window.document.createElement('a');
+        elem.href = window.URL.createObjectURL(blob2);
+        elem.download = filename;
+        document.body.appendChild(elem);
+        elem.click();
+        document.body.removeChild(elem);
     }
+}
 
 </script>
 </body>

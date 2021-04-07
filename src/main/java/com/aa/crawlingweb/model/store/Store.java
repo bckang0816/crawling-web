@@ -10,6 +10,7 @@ import lombok.*;
 @ToString
 public class Store {
 
+    private long id;
     private String placeName;
     private String category;
     private String tel;

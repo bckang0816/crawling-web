@@ -2,6 +2,7 @@ package com.aa.crawlingweb.util;
 
 import com.aa.crawlingweb.model.naver.Detail;
 import com.aa.crawlingweb.model.naver.StoreInfo;
+import com.aa.crawlingweb.model.response.CrawlingChoices;
 import com.aa.crawlingweb.model.response.CrawlingResponse;
 import com.aa.crawlingweb.model.store.Store;
 import com.aa.crawlingweb.model.type.MapType;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Component
 @RequiredArgsConstructor
@@ -86,13 +88,13 @@ public class SearchUtil {
                         }
                     }
                 } catch (Exception e) {
-                    loggingUtil.writeFile("Map B Error : " + driver.getCurrentUrl());
-                    loggingUtil.writeFile(e.getMessage());
+                    loggingUtil.writeFile("Map B Error1 : " + driver.getCurrentUrl());
+                    e.printStackTrace();
                     database.getFails().add(driver.getCurrentUrl());
                 }
             } catch (Exception e) {
-                loggingUtil.writeFile("Map B Error : " + driver.getCurrentUrl());
-                loggingUtil.writeFile(e.getMessage());
+                loggingUtil.writeFile("Map B Error2 : " + driver.getCurrentUrl());
+                e.printStackTrace();
                 database.getFails().add(driver.getCurrentUrl());
             }
         } else if(mapType == MapType.INVALID) {
@@ -101,16 +103,15 @@ public class SearchUtil {
             return;
         }
 
-        if(store.getPlaceName() == null || !getDetailInfo(driver, store)) {
+        if(store.getPlaceName() == null || !getDetailInfo(driver, store, database)) {
             loggingUtil.writeFile("Invalid Place : " + store.getMapUrl());
             database.getFails().add(driver.getCurrentUrl());
             return;
         }
-        database.getSuccesses().add(store);
     }
 
-    private boolean getDetailInfo(WebDriver driver, Store store) {
-        String storeInfoUrl = "https://map.naver.com/v5/api/search?query=" + store.getPlaceName().replace(" ", "%20");
+    private boolean getDetailInfo(WebDriver driver, Store storeData, CrawlingResponse database) {
+        String storeInfoUrl = "https://map.naver.com/v5/api/search?query=" + storeData.getPlaceName().replace(" ", "%20");
         try {
             driver.get(storeInfoUrl);
 
@@ -119,36 +120,42 @@ public class SearchUtil {
             StoreInfo info = om.readValue(infoJson, StoreInfo.class);
             List<Detail> details = info.getResult().getPlace().getList();
 
-            boolean isExistStore = false;
-            Detail detail = new Detail();
-            for(Detail tmpDetail : details) {
-                if(store.getPlaceName().equals(tmpDetail.getName())) {
-                    isExistStore = true;
-                    detail = new Detail(tmpDetail);
+            List<Store> storeList = new ArrayList<>();
+            for(Detail detail : details) {
+                if(!detail.getName().equals(storeData.getPlaceName())) {
+                   continue;
                 }
+                String tel = null;
+                if(!StringUtils.isEmpty(detail.getVirtualTel())) {
+                    tel = detail.getVirtualTel();
+                } else if(!StringUtils.isEmpty(detail.getTel())) {
+                    tel = detail.getTel();
+                }
+                Store store = new Store();
+                store.setPlaceName(detail.getName());
+                store.setCategory(storeData.getCategory());
+                store.setMapUrl(storeData.getMapUrl());
+                store.setId(detail.getId());
+                store.setTel(tel);
+                store.setBusinessHour(!StringUtils.isEmpty(detail.getBizhourInfo()) ? detail.getBizhourInfo() : null);
+                store.setHomepage(!StringUtils.isEmpty(detail.getHomePage()) ? detail.getHomePage() : null);
+                store.setDescription((detail.getMicroReview() != null && detail.getMicroReview().size() > 0) ? detail.getMicroReview().get(0) : null);
+                store.setConvenience(storeData.getConvenience());
+                store.setShortAddress((detail.getShortAddress() != null && detail.getShortAddress().size() > 0) ? detail.getShortAddress().get(0) : null);
+                store.setAddress(!StringUtils.isEmpty(detail.getAddress()) ? detail.getAddress() : null);
+                store.setRoadAddress(!StringUtils.isEmpty(detail.getRoadAddress()) ? detail.getRoadAddress() : null);
+                store.setLatitude(detail.getX());
+                store.setLongitude(detail.getY());
+                storeList.add(store);
+                loggingUtil.writeFile("[Store] " + store);
             }
-
-            if(!isExistStore) {
-                loggingUtil.writeFile("[Not Exist Detail Data] Place Name : " + store.getPlaceName());
-                return false;
-            }
-
-            String tel = null;
-            if(!StringUtils.isEmpty(detail.getVirtualTel())) {
-                tel = detail.getVirtualTel();
-            } else if(!StringUtils.isEmpty(detail.getTel())) {
-                tel = detail.getTel();
-            }
-            store.setTel(tel);
-            store.setBusinessHour(!StringUtils.isEmpty(detail.getBizhourInfo()) ? detail.getBizhourInfo() : null);
-            store.setHomepage(!StringUtils.isEmpty(detail.getHomePage()) ? detail.getHomePage() : null);
-            store.setDescription((detail.getMicroReview() != null && detail.getMicroReview().size() > 0) ? detail.getMicroReview().get(0) : null);
-            store.setShortAddress((detail.getShortAddress() != null && detail.getShortAddress().size() > 0) ? detail.getShortAddress().get(0) : null);
-            store.setAddress(!StringUtils.isEmpty(detail.getAddress()) ? detail.getAddress() : null);
-            store.setRoadAddress(!StringUtils.isEmpty(detail.getRoadAddress()) ? detail.getRoadAddress() : null);
-            store.setLatitude(detail.getX());
-            store.setLongitude(detail.getY());
-            loggingUtil.writeFile("[Store] " + store);
+            CrawlingChoices choices = CrawlingChoices.builder()
+                    .placeName(storeData.getPlaceName())
+                    .mapUrl(storeData.getMapUrl())
+                    .choices(storeList)
+                    .uuid(UUID.randomUUID().toString().replaceAll("-", ""))
+                    .build();
+            database.getStores().add(choices);
             return true;
         } catch (Exception e) {
             loggingUtil.writeFile("[Failed Get Store Info] API URL - " + storeInfoUrl);

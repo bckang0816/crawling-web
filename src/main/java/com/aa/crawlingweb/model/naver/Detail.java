@@ -13,6 +13,7 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Detail {
 
+    private long id;
     private String name;
     private String virtualTel;
     private String tel;

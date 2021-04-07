@@ -13,7 +13,7 @@ import java.util.List;
 @ToString
 public class CrawlingResponse {
 
-    private List<Store> successes = new ArrayList<>();
+    private List<CrawlingChoices> stores = new ArrayList<>();
     private List<String> fails = new ArrayList<>();
 
 }

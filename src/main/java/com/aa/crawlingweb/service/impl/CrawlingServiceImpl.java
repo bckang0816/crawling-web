@@ -5,6 +5,7 @@ import com.aa.crawlingweb.model.request.CrawlingRequest;
 import com.aa.crawlingweb.model.response.CrawlingResponse;
 import com.aa.crawlingweb.model.store.Store;
 import com.aa.crawlingweb.service.CrawlingService;
+import com.aa.crawlingweb.util.ListUtil;
 import com.aa.crawlingweb.util.LoggingUtil;
 import com.aa.crawlingweb.util.SearchUtil;
 import com.aa.crawlingweb.util.SeleniumUtil;
@@ -40,6 +41,7 @@ public class CrawlingServiceImpl implements CrawlingService {
         // Selenium 드라이브 생성
         WebDriver driver = seleniumUtil.getInstance(request);
 
+        ListUtil.distinct(request.getUrls());
         CrawlingResponse database = searchUtil.getMapInfo(request.getUrls(), driver);
 
         // Selenium 드라이브 종료
