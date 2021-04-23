@@ -122,9 +122,10 @@ public class SearchUtil {
 
             List<Store> storeList = new ArrayList<>();
             for(Detail detail : details) {
-                if(!detail.getName().equals(storeData.getPlaceName())) {
-                   continue;
-                }
+                // 검색어와 이름이 동일한 업체만 노출
+//                if(!detail.getName().equals(storeData.getPlaceName())) {
+//                   continue;
+//                }
                 String tel = null;
                 if(!StringUtils.isEmpty(detail.getVirtualTel())) {
                     tel = detail.getVirtualTel();
