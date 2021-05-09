@@ -12,13 +12,13 @@ import java.util.List;
 @Slf4j
 public class ListUtil {
 
-    public static void distinct(List<String> urls) {
-        List<String> resultList = new ArrayList<>();
-        for (int i = 0; i < urls.size(); i++) {
-            if (!resultList.contains(urls.get(i))) {
-                resultList.add(urls.get(i));
+    public static void distinct(List<Long> ids) {
+        List<Long> resultList = new ArrayList<>();
+        for (int i = 0; i < ids.size(); i++) {
+            if (!resultList.contains(ids.get(i))) {
+                resultList.add(ids.get(i));
             }
         }
-        urls = new ArrayList<>(resultList);
+        ids = new ArrayList<>(resultList);
     }
 }

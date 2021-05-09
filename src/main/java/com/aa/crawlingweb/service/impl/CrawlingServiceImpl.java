@@ -41,8 +41,8 @@ public class CrawlingServiceImpl implements CrawlingService {
         // Selenium 드라이브 생성
         WebDriver driver = seleniumUtil.getInstance(request);
 
-        ListUtil.distinct(request.getUrls());
-        CrawlingResponse database = searchUtil.getMapInfo(request.getUrls(), driver);
+        ListUtil.distinct(request.getIds());
+        CrawlingResponse database = searchUtil.getMapInfo(request.getIds(), driver);
 
         // Selenium 드라이브 종료
         driver.close();

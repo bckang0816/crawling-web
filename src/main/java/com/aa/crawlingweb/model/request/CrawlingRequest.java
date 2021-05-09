@@ -11,7 +11,7 @@ import java.util.List;
 @ToString
 public class CrawlingRequest {
 
-    private List<String> urls;
+    private List<Long> ids;
     private boolean useSecretMode;
     private boolean useHeadlessMode;
 

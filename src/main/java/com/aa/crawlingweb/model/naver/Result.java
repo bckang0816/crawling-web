@@ -11,7 +11,6 @@ import lombok.*;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Result {
 
-
     private Place place;
 
 }

@@ -13,7 +13,6 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Place {
 
-
     private List<Detail> list;
 
 }

@@ -14,6 +14,6 @@ import java.util.List;
 public class CrawlingResponse {
 
     private List<CrawlingChoices> stores = new ArrayList<>();
-    private List<String> fails = new ArrayList<>();
+    private List<Long> fails = new ArrayList<>();
 
 }
